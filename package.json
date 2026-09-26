@@ -1,0 +1,11 @@
+{
+  "name": "contextual-controls-card",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check contextual-controls-card.js && node --check dist/contextual-controls-card.js",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
