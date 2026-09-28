@@ -23,6 +23,18 @@ Choose the sensor, optional title, maximum controls, desktop/mobile columns, tap
 
 Enable **Dynamic title** for Good morning / For you now / This evening / Before sleep. Leaving `max_controls` empty uses the number already selected by the integration.
 
+## Adaptive Learning dashboard
+
+Contextual Controls 0.8.0 adds a disabled-by-default diagnostic entity named
+`sensor.contextual_controls_learning`. Enable it from Settings → Devices & services →
+Entities, then add the **Contextual Controls Learning** card from the visual card picker.
+
+The dashboard shows local learning confidence, Top-1 and Top-3 hit rates, accepted
+suggestions, the offline comparison between base and adaptive ranking, frequent A→B
+transitions, A→B→C sequences, and per-entity acceptance. Entity names open native
+more-info. The visual editor controls the sensor, title, maximum patterns and visible
+sections. No history or personal identifiers are sent outside Home Assistant.
+
 ## Actions and safety
 
 Automatic tap toggles lights, switches, fans, and input booleans; activates scenes and scripts; and presses buttons. Climate, media players, covers, locks, vacuums, selects, numbers, alarm panels, and sirens open more-info. Hold always opens more-info. Every action requires a user gesture.
@@ -34,7 +46,7 @@ Copy `dist/contextual-controls-card.js` to `/config/www/contextual-controls-card
 ## Requirements
 
 - Home Assistant 2026.9 or newer
-- Contextual Controls 0.4.0 or newer
+- Contextual Controls 0.8.0 or newer for the Adaptive Learning dashboard
 
 ## Development
 
