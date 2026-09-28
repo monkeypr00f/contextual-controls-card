@@ -21,6 +21,7 @@ vm.createContext(sandbox);
 vm.runInContext(source, sandbox);
 const helpers = sandbox.window.ContextualControlsCardTest;
 const Card = registry.get("contextual-controls-card");
+const LearningCard = registry.get("contextual-controls-learning-card");
 
 test("automatic actions remain user initiated and domain safe", () => {
   assert.deepEqual({ ...helpers.automaticAction("light.kitchen") }, { domain: "homeassistant", service: "toggle" });
@@ -47,8 +48,45 @@ test("defaults are useful without YAML", () => {
 
 test("card registers once and offers the sensor suggestion", () => {
   assert.ok(Card);
-  assert.equal(sandbox.window.customCards.length, 1);
+  assert.ok(LearningCard);
+  assert.equal(sandbox.window.customCards.length, 2);
   const suggestion = sandbox.window.customCards[0].getEntitySuggestion({}, "sensor.contextual_controls");
   assert.equal(suggestion.config.type, "custom:contextual-controls-card");
   assert.equal(sandbox.window.customCards[0].getEntitySuggestion({}, "light.kitchen"), null);
+});
+
+test("learning dashboard has useful visual defaults", () => {
+  const config = LearningCard.getStubConfig();
+  assert.equal(config.sensor, "sensor.contextual_controls_learning");
+  assert.equal(config.max_patterns, 6);
+  assert.equal(config.show_comparison, true);
+  assert.equal(config.show_sequences, true);
+  const form = JSON.stringify(LearningCard.getConfigForm().schema);
+  for (const value of [
+    "max_patterns",
+    "show_comparison",
+    "show_transitions",
+    "show_sequences",
+    "show_feedback",
+  ]) {
+    assert.match(form, new RegExp(value));
+  }
+});
+
+test("learning helpers clamp rates and format delays", () => {
+  assert.equal(helpers.rateLabel(0.724), "72%");
+  assert.equal(helpers.rateLabel(4), "100%");
+  assert.equal(helpers.rateLabel(-1), "0%");
+  assert.equal(helpers.delayLabel(45), "45s");
+  assert.equal(helpers.delayLabel(600), "10m");
+  assert.equal(helpers.delayLabel(5400), "1.5h");
+});
+
+test("learning sensor suggestion selects the learning card", () => {
+  const registration = sandbox.window.customCards.find(
+    (card) => card.type === "contextual-controls-learning-card",
+  );
+  const suggestion = registration.getEntitySuggestion({}, "sensor.contextual_controls_learning");
+  assert.equal(suggestion.config.type, "custom:contextual-controls-learning-card");
+  assert.equal(registration.getEntitySuggestion({}, "sensor.contextual_controls"), null);
 });
